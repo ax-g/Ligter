@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ignite & Embers — Collectible Lighters</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!--
+  ╔═══════════════════════════════════════════════════════════════╗
+  ║         IMAGE FILES REQUIRED  —  place in: images/           ║
+  ╠═══════════════════════════════════════════════════════════════╣
+  ║  HERO                                                         ║
+  ║    images/hero-lighter.png          800×1100 px  transparent  ║
+  ║                                                               ║
+  ║  FEATURED COLLECTION (product cards)                          ║
+  ║    images/product-gold-eagle.png           600×600 px         ║
+  ║    images/product-palladium-crest.png      600×600 px         ║
+  ║    images/product-rollagas-mahogany.png    600×600 px         ║
+  ║    images/product-crimson-blade.png        600×600 px         ║
+  ║    images/product-navy-admiral.png         600×600 px         ║
+  ║    images/product-verdant-triplex.png      600×600 px         ║
+  ║                                                               ║
+  ║  ABOUT SECTION                                                ║
+  ║    images/about-lighter.png         600×900 px  transparent   ║
+  ║                                                               ║
+  ║  BEST SELLERS                                                 ║
+  ║    images/bs-gold-eagle.png                400×400 px         ║
+  ║    images/bs-palladium-crest.png           400×400 px         ║
+  ║    images/bs-crimson-blade.png             400×400 px         ║
+  ║    images/bs-rollagas-mahogany.png         400×400 px         ║
+  ║                                                               ║
+  ║  All images: PNG with transparent background recommended.     ║
+  ╚═══════════════════════════════════════════════════════════════╝
+  -->
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --olive:       #4a5240;
+      --olive-dark:  #3a4132;
+      --olive-light: #5c6650;
+      --olive-muted: #3d4636;
+      --cream:       #f2ede4;
+      --black:       #111111;
+      --gold:        #c8a96e;
+      --border:      rgba(242,237,228,0.18);
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans:  'Inter', system-ui, sans-serif;
+      --pill:  100px;
+      --card:  16px;
+      --ease:  0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--olive);
+      color: var(--cream);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 40px;
+      background: rgba(74,82,64,0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--serif); font-size: 22px; font-weight: 500;
+      letter-spacing: .04em; color: var(--cream); text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 36px; list-style: none; align-items: center; }
+    .nav-links a {
+      color: rgba(242,237,228,.75); text-decoration: none;
+      font-size: 13.5px; letter-spacing: .06em;
+      transition: color var(--ease);
+    }
+    .nav-links a:hover { color: var(--cream); }
+    .nav-cta {
+      background: var(--black) !important;
+      color: var(--cream) !important;
+      padding: 10px 22px; border-radius: var(--pill);
+      font-weight: 500 !important;
+    }
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; background: none; border: none; padding: 4px;
+    }
+    .hamburger span { display: block; width: 24px; height: 1.5px; background: var(--cream); }
+    .mobile-menu {
+      display: none; position: fixed; inset: 0;
+      background: var(--olive-dark); z-index: 99;
+      flex-direction: column; align-items: center; justify-content: center; gap: 32px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      color: var(--cream); text-decoration: none;
+      font-family: var(--serif); font-size: 28px;
+    }
+    .mobile-close {
+      position: absolute; top: 24px; right: 24px;
+      background: none; border: none; color: var(--cream); font-size: 28px; cursor: pointer;
+    }
+
+    /* ── HERO ── */
+    .hero-section { min-height: 100svh; display: flex; align-items: center; padding-top: 80px; }
+    .hero {
+      max-width: 1200px; margin: 0 auto;
+      padding: 60px 40px 80px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; gap: 60px; width: 100%;
+    }
+    .hero-content { max-width: 520px; }
+    .hero-eyebrow {
+      display: inline-block; font-size: 11px; font-weight: 600;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: rgba(242,237,228,.55); margin-bottom: 20px;
+      border: 1px solid var(--border); padding: 6px 14px; border-radius: var(--pill);
+    }
+    .hero-title {
+      font-family: var(--serif);
+      font-size: clamp(44px, 6vw, 76px);
+      font-weight: 500; line-height: 1.05;
+      letter-spacing: -.02em; margin-bottom: 24px; color: var(--cream);
+    }
+    .hero-title em { font-style: italic; color: rgba(242,237,228,.8); }
+    .hero-desc {
+      font-size: 15px; line-height: 1.75;
+      color: rgba(242,237,228,.65); max-width: 400px; margin-bottom: 40px;
+    }
+    .hero-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--black); color: var(--cream);
+      text-decoration: none; padding: 16px 32px; border-radius: var(--pill);
+      font-size: 14px; font-weight: 500; letter-spacing: .04em;
+      border: none; cursor: pointer;
+      transition: background var(--ease), transform var(--ease);
+    }
+    .btn-primary:hover { background: #222; transform: translateY(-1px); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: transparent; color: rgba(242,237,228,.7);
+      text-decoration: none; padding: 16px 8px;
+      font-size: 14px; border: none; cursor: pointer;
+      transition: color var(--ease);
+    }
+    .btn-secondary:hover { color: var(--cream); }
+    .hero-stats {
+      margin-top: 52px; display: flex; gap: 40px;
+      padding-top: 32px; border-top: 1px solid var(--border);
+    }
+    .stat-num {
+      font-family: var(--serif); font-size: 28px; font-weight: 500; color: var(--cream);
+    }
+    .stat-label {
+      font-size: 11px; color: rgba(242,237,228,.5);
+      letter-spacing: .08em; text-transform: uppercase; margin-top: 2px;
+    }
+
+    /* Hero image */
+    .hero-image { display: flex; align-items: center; justify-content: center; position: relative; }
+    .hero-img-wrap { position: relative; width: 420px; max-width: 100%; }
+    .hero-img-wrap::before {
+      content: '';
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 280px; height: 380px;
+      background: radial-gradient(ellipse, rgba(200,169,110,.18) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .hero-img-wrap img {
+      /* ── FILE: images/hero-lighter.png ── */
+      width: 100%; height: auto; max-height: 560px;
+      object-fit: contain; object-position: center;
+      filter: drop-shadow(0 40px 80px rgba(0,0,0,.55)) drop-shadow(0 0 40px rgba(200,169,110,.15));
+      animation: floatLighter 6s ease-in-out infinite;
+      display: block; position: relative; z-index: 1;
+    }
+    @keyframes floatLighter {
+      0%,100% { transform: translateY(0) rotate(-2deg); }
+      50%      { transform: translateY(-20px) rotate(1.5deg); }
+    }
+
+    /* ── MARQUEE ── */
+    .marquee-strip {
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      padding: 18px 0; overflow: hidden; background: var(--olive-dark);
+    }
+    .marquee-track { display: flex; animation: marquee 28s linear infinite; white-space: nowrap; }
+    .marquee-item {
+      display: inline-flex; align-items: center; gap: 20px; padding: 0 36px;
+      font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+      color: rgba(242,237,228,.45); flex-shrink: 0;
+    }
+    .marquee-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--gold); opacity: .7; flex-shrink: 0; }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── SHARED SECTION ── */
+    section { padding: 100px 40px; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .section-eyebrow {
+      font-size: 10.5px; font-weight: 600; letter-spacing: .2em;
+      text-transform: uppercase; color: rgba(242,237,228,.4); margin-bottom: 14px;
+    }
+    .section-title {
+      font-family: var(--serif); font-size: clamp(30px, 4vw, 50px);
+      font-weight: 500; line-height: 1.1; letter-spacing: -.02em;
+      color: var(--cream); margin-bottom: 14px;
+    }
+    .section-desc {
+      font-size: 15px; line-height: 1.75; color: rgba(242,237,228,.58); max-width: 460px;
+    }
+    .gold-line { width: 36px; height: 1px; background: var(--gold); opacity: .5; margin-bottom: 18px; }
+
+    /* ── COLLECTION ── */
+    .collection-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-bottom: 48px; flex-wrap: wrap; gap: 20px;
+    }
+    .products-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+    .product-card {
+      background: var(--olive-dark); border: 1px solid var(--border);
+      border-radius: var(--card); overflow: hidden;
+      transition: transform var(--ease), box-shadow var(--ease), border-color var(--ease);
+    }
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 60px rgba(0,0,0,.35);
+      border-color: rgba(200,169,110,.3);
+    }
+    .product-img-box {
+      width: 100%; aspect-ratio: 4/3; background: var(--olive-muted);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .product-img-box img {
+      /* Product images: images/product-*.png — PNG transparent, 600×600 px */
+      width: 65%; height: 80%; object-fit: contain; object-position: center;
+      filter: drop-shadow(0 8px 20px rgba(0,0,0,.4));
+      transition: transform var(--ease);
+    }
+    .product-card:hover .product-img-box img { transform: scale(1.06) rotate(2deg); }
+    .product-badge {
+      position: absolute; top: 14px; right: 14px; z-index: 2;
+      background: var(--black); color: var(--cream);
+      font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: var(--pill);
+    }
+    .product-body { padding: 22px 24px 24px; }
+    .product-brand {
+      font-size: 10px; font-weight: 600; letter-spacing: .18em;
+      text-transform: uppercase; color: rgba(242,237,228,.38); margin-bottom: 6px;
+    }
+    .product-name {
+      font-family: var(--serif); font-size: 18px; font-weight: 500;
+      color: var(--cream); margin-bottom: 4px; line-height: 1.3;
+    }
+    .product-era { font-size: 12px; color: rgba(242,237,228,.42); margin-bottom: 18px; }
+    .product-footer { display: flex; align-items: center; justify-content: space-between; }
+    .product-price { font-family: var(--serif); font-size: 20px; font-weight: 500; color: var(--cream); }
+    .btn-add {
+      background: var(--black); color: var(--cream); border: none;
+      padding: 10px 18px; border-radius: var(--pill);
+      font-size: 12px; font-weight: 500; letter-spacing: .04em;
+      cursor: pointer; transition: background var(--ease);
+    }
+    .btn-add:hover { background: #2a2a2a; }
+
+    /* ── ABOUT ── */
+    .about-section { background: var(--olive-dark); }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .about-visual { position: relative; height: 520px; }
+    .about-frame {
+      position: absolute; inset: 0;
+      border: 1px solid var(--border); border-radius: 20px;
+      background: var(--olive-muted);
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .about-frame::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 30%, rgba(200,169,110,.1) 0%, transparent 65%);
+    }
+    .about-frame img {
+      /* FILE: images/about-lighter.png — PNG transparent, 600×900 px */
+      width: 55%; height: 80%; object-fit: contain;
+      filter: drop-shadow(0 20px 40px rgba(0,0,0,.45));
+      position: relative; z-index: 1;
+    }
+    .about-accent {
+      position: absolute; bottom: -20px; right: -20px;
+      width: 160px; height: 160px;
+      border: 1px solid var(--border); border-radius: 16px;
+      background: var(--olive);
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; text-align: center; gap: 4px; padding: 20px;
+    }
+    .about-accent-num {
+      font-family: var(--serif); font-size: 36px; font-weight: 500;
+      color: var(--cream); line-height: 1;
+    }
+    .about-accent-text {
+      font-size: 11px; color: rgba(242,237,228,.48);
+      letter-spacing: .08em; text-transform: uppercase; line-height: 1.4;
+    }
+    .about-points { display: flex; flex-direction: column; gap: 28px; margin-top: 40px; }
+    .about-point { display: flex; gap: 16px; align-items: flex-start; }
+    .about-point-icon {
+      width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; color: var(--gold); font-size: 15px;
+    }
+    .about-point-title {
+      font-family: var(--serif); font-size: 16px; font-weight: 500;
+      color: var(--cream); margin-bottom: 4px;
+    }
+    .about-point-desc { font-size: 13.5px; color: rgba(242,237,228,.52); line-height: 1.65; }
+
+    /* ── BEST SELLERS ── */
+    .bestsellers-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
+    .bs-card {
+      background: var(--olive-dark); border: 1px solid var(--border);
+      border-radius: var(--card); padding: 28px 20px; text-align: center;
+      transition: transform var(--ease), border-color var(--ease);
+    }
+    .bs-card:hover { transform: translateY(-4px); border-color: rgba(200,169,110,.3); }
+    .bs-img-box {
+      width: 100%; aspect-ratio: 1;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 20px;
+    }
+    .bs-img-box img {
+      /* Best-seller images: images/bs-*.png — PNG transparent, 400×400 px */
+      width: 70%; height: 70%; object-fit: contain;
+      filter: drop-shadow(0 6px 16px rgba(0,0,0,.35));
+      transition: transform var(--ease);
+    }
+    .bs-card:hover .bs-img-box img { transform: scale(1.08); }
+    .bs-num { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: rgba(242,237,228,.32); margin-bottom: 8px; }
+    .bs-name { font-family: var(--serif); font-size: 15px; font-weight: 500; color: var(--cream); margin-bottom: 4px; }
+    .bs-price { font-size: 14px; color: rgba(242,237,228,.55); }
+
+    /* ── WHY ── */
+    .why-section { background: var(--olive-dark); }
+    .why-grid {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      border: 1px solid var(--border); border-radius: var(--card);
+      overflow: hidden; margin-top: 16px;
+    }
+    .why-card {
+      padding: 44px 36px; border-right: 1px solid var(--border);
+      transition: background var(--ease);
+    }
+    .why-card:last-child { border-right: none; }
+    .why-card:hover { background: rgba(242,237,228,.03); }
+    .why-icon { font-size: 24px; margin-bottom: 20px; opacity: .75; }
+    .why-title { font-family: var(--serif); font-size: 19px; font-weight: 500; color: var(--cream); margin-bottom: 10px; }
+    .why-desc { font-size: 13.5px; line-height: 1.72; color: rgba(242,237,228,.5); }
+
+    /* ── REVIEWS ── */
+    .reviews-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+    .review-card {
+      background: var(--olive-dark); border: 1px solid var(--border);
+      border-radius: var(--card); padding: 32px 28px;
+      transition: border-color var(--ease);
+    }
+    .review-card:hover { border-color: rgba(200,169,110,.25); }
+    .review-stars { display: flex; gap: 3px; margin-bottom: 18px; }
+    .star { color: var(--gold); font-size: 13px; }
+    .review-text {
+      font-family: var(--serif); font-size: 15px; line-height: 1.72;
+      color: rgba(242,237,228,.78); font-style: italic; margin-bottom: 24px;
+    }
+    .review-author { display: flex; align-items: center; gap: 14px; }
+    .review-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--olive-light); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif); font-size: 13px; color: rgba(242,237,228,.7); flex-shrink: 0;
+    }
+    .review-name { font-size: 13px; font-weight: 500; color: var(--cream); }
+    .review-loc { font-size: 11px; color: rgba(242,237,228,.38); margin-top: 2px; }
+
+    /* ── NEWSLETTER ── */
+    .newsletter-section {
+      padding: 90px 40px;
+      background: var(--olive-dark);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .newsletter-inner { max-width: 580px; margin: 0 auto; text-align: center; }
+    .newsletter-form { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+    .newsletter-input {
+      flex: 1; min-width: 200px;
+      background: var(--olive-muted); border: 1px solid var(--border);
+      border-radius: var(--pill); padding: 14px 22px;
+      color: var(--cream); font-family: var(--sans); font-size: 14px;
+      outline: none; transition: border-color var(--ease);
+    }
+    .newsletter-input::placeholder { color: rgba(242,237,228,.32); }
+    .newsletter-input:focus { border-color: rgba(242,237,228,.35); }
+    .newsletter-btn {
+      background: var(--black); color: var(--cream); border: none;
+      border-radius: var(--pill); padding: 14px 28px;
+      font-size: 14px; font-weight: 500; cursor: pointer; white-space: nowrap;
+      transition: background var(--ease);
+    }
+    .newsletter-btn:hover { background: #2a2a2a; }
+
+    /* ── FOOTER ── */
+    footer { padding: 72px 40px 40px; background: var(--olive-muted); }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px; max-width: 1200px; margin: 0 auto 56px;
+    }
+    .footer-brand-name { font-family: var(--serif); font-size: 20px; font-weight: 500; color: var(--cream); margin-bottom: 12px; }
+    .footer-brand-desc { font-size: 13px; line-height: 1.72; color: rgba(242,237,228,.42); max-width: 240px; }
+    .footer-col-title {
+      font-size: 10.5px; font-weight: 600; letter-spacing: .16em;
+      text-transform: uppercase; color: rgba(242,237,228,.38); margin-bottom: 18px;
+    }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-links a {
+      color: rgba(242,237,228,.52); text-decoration: none;
+      font-size: 13.5px; transition: color var(--ease);
+    }
+    .footer-links a:hover { color: var(--cream); }
+    .footer-bottom {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 28px; border-top: 1px solid var(--border);
+      flex-wrap: wrap; gap: 12px;
+    }
+    .footer-copy { font-size: 12px; color: rgba(242,237,228,.28); }
+    .footer-legal { display: flex; gap: 24px; }
+    .footer-legal a {
+      font-size: 12px; color: rgba(242,237,228,.28);
+      text-decoration: none; transition: color var(--ease);
+    }
+    .footer-legal a:hover { color: rgba(242,237,228,.6); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      .products-grid    { grid-template-columns: repeat(2,1fr); }
+      .bestsellers-grid { grid-template-columns: repeat(2,1fr); }
+      .footer-grid      { grid-template-columns: 1fr 1fr; gap: 36px; }
+      .hero             { grid-template-columns: 1fr; gap: 40px; }
+      .hero-image       { order: -1; }
+      .hero-img-wrap    { width: 280px; }
+      .hero-content     { max-width: 100%; }
+      .about-grid       { grid-template-columns: 1fr; gap: 48px; }
+      .about-visual     { height: 360px; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      .nav-links  { display: none; }
+      .hamburger  { display: flex; }
+      section     { padding: 72px 20px; }
+      .hero       { padding: 40px 20px 60px; }
+      .hero-section { padding-top: 70px; }
+      .products-grid    { grid-template-columns: 1fr; }
+      .bestsellers-grid { grid-template-columns: repeat(2,1fr); }
+      .why-grid   { grid-template-columns: 1fr; }
+      .why-card   { border-right: none; border-bottom: 1px solid var(--border); }
+      .why-card:last-child { border-bottom: none; }
+      .reviews-grid { grid-template-columns: 1fr; }
+      .footer-grid  { grid-template-columns: 1fr; gap: 32px; }
+      .newsletter-section { padding: 60px 20px; }
+      .about-visual { height: 300px; }
+      .about-accent { display: none; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 480px) {
+      .hero-title        { font-size: 38px; }
+      .bestsellers-grid  { grid-template-columns: 1fr; }
+      .hero-stats        { flex-wrap: wrap; gap: 24px; }
+      .newsletter-form   { flex-direction: column; }
+      .hero-img-wrap     { width: 220px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="#" class="nav-logo">E&amp;E</a>
+  <ul class="nav-links">
+    <li><a href="#collection">Collections</a></li>
+    <li><a href="#about">Science</a></li>
+    <li><a href="#about">Aesthetics</a></li>
+    <li><a href="#reviews">About Us</a></li>
+    <li><a href="#newsletter">Contact</a></li>
+    <li><a href="#collection" class="nav-cta">Shop Now</a></li>
+  </ul>
+  <button class="hamburger" onclick="openMenu()" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" onclick="closeMenu()">&#x2715;</button>
+  <a href="#collection" onclick="closeMenu()">Collections</a>
+  <a href="#about"      onclick="closeMenu()">About</a>
+  <a href="#bestsellers" onclick="closeMenu()">Best Sellers</a>
+  <a href="#reviews"    onclick="closeMenu()">Reviews</a>
+  <a href="#newsletter" onclick="closeMenu()">Contact</a>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     HERO
+     Image file ➜  images/hero-lighter.png
+     PNG with transparent background, 800×1100 px
+     ══════════════════════════════════════════════ -->
+<div class="hero-section">
+  <div class="hero">
+    <div class="hero-content">
+      <span class="hero-eyebrow">Est. 2018 — Since the First Flame</span>
+      <h1 class="hero-title">Ignite &amp;<br /><em>Embers</em></h1>
+      <p class="hero-desc">We source the world's most precise, beautiful, and collectible lighters. Find a piece that reflects your character and stands the test of time.</p>
+      <div class="hero-actions">
+        <a href="#collection" class="btn-primary">
+          Shop Collections
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <a href="#about" class="btn-secondary">Our Story &#8594;</a>
+      </div>
+      <div class="hero-stats">
+        <div><div class="stat-num">600+</div><div class="stat-label">Rare Pieces</div></div>
+        <div><div class="stat-num">48</div><div class="stat-label">Countries</div></div>
+        <div><div class="stat-num">12yr</div><div class="stat-label">Heritage</div></div>
+      </div>
+    </div>
+
+    <div class="hero-image">
+      <div class="hero-img-wrap">
+        <img
+          src="images/hero-lighter.png"
+          alt="Premium collectible lighter — Ignite &amp; Embers"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- MARQUEE -->
+<div class="marquee-strip">
+  <div class="marquee-track">
+    <span class="marquee-item">Zippo Heritage <span class="marquee-dot"></span></span>
+    <span class="marquee-item">S.T. Dupont <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Colibri Series <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Dunhill Rollagas <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Ronson Varaflame <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Flamidor 1920s <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Austrian Petromax <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Imco Triplex <span class="marquee-dot"></span></span>
+    <!-- duplicated for seamless loop -->
+    <span class="marquee-item">Zippo Heritage <span class="marquee-dot"></span></span>
+    <span class="marquee-item">S.T. Dupont <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Colibri Series <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Dunhill Rollagas <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Ronson Varaflame <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Flamidor 1920s <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Austrian Petromax <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Imco Triplex <span class="marquee-dot"></span></span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     FEATURED COLLECTION
+     Image files ➜  images/product-*.png
+     PNG transparent, 600×600 px each
+     ══════════════════════════════════════════════ -->
+<section id="collection">
+  <div class="container">
+    <div class="collection-header">
+      <div>
+        <p class="section-eyebrow">Featured Collection</p>
+        <h2 class="section-title">Curated and premium<br />collectible pieces</h2>
+      </div>
+      <a href="#" class="btn-primary">View All &#8594;</a>
+    </div>
+    <div class="products-grid">
+
+      <!-- 1 ── images/product-gold-eagle.png -->
+      <div class="product-card">
+        <div class="product-img-box">
+          <span class="product-badge">New</span>
+          <img src="images/product-gold-eagle.png" alt="Gold Eagle Engraved Zippo" loading="lazy" />
+        </div>
+        <div class="product-body">
+          <p class="product-brand">Zippo USA</p>
+          <p class="product-name">Gold Eagle Engraved</p>
+          <p class="product-era">1968 · Brushed Brass</p>
+          <div class="product-footer">
+            <span class="product-price">$285</span>
+            <button class="btn-add">+ Add</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 ── images/product-palladium-crest.png -->
+      <div class="product-card">
+        <div class="product-img-box">
+          <span class="product-badge">Rare</span>
+          <img src="images/product-palladium-crest.png" alt="S.T. Dupont Palladium Crest" loading="lazy" />
+        </div>
+        <div class="product-body">
+          <p class="product-brand">S.T. Dupont</p>
+          <p class="product-name">Palladium Crest</p>
+          <p class="product-era">1974 · Palladium Plate</p>
+          <div class="product-footer">
+            <span class="product-price">$1,240</span>
+            <button class="btn-add">+ Add</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 ── images/product-rollagas-mahogany.png -->
+      <div class="product-card">
+        <div class="product-img-box">
+          <img src="images/product-rollagas-mahogany.png" alt="Dunhill Rollagas Mahogany" loading="lazy" />
+        </div>
+        <div class="product-body">
+          <p class="product-brand">Dunhill</p>
+          <p class="product-name">Rollagas Mahogany</p>
+          <p class="product-era">1980 · Dark Walnut Enamel</p>
+          <div class="product-footer">
+            <span class="product-price">$680</span>
+            <button class="btn-add">+ Add</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 ── images/product-crimson-blade.png -->
+      <div class="product-card">
+        <div class="product-img-box">
+          <span class="product-badge">Limited</span>
+          <img src="images/product-crimson-blade.png" alt="Colibri Crimson Blade Jet" loading="lazy" />
+        </div>
+        <div class="product-body">
+          <p class="product-brand">Colibri</p>
+          <p class="product-name">Crimson Blade Jet</p>
+          <p class="product-era">2001 · Lacquered Steel</p>
+          <div class="product-footer">
+            <span class="product-price">$195</span>
+            <button class="btn-add">+ Add</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5 ── images/product-navy-admiral.png -->
+      <div class="product-card">
+        <div class="product-img-box">
+          <img src="images/product-navy-admiral.png" alt="Ronson Navy Admiral Blue" loading="lazy" />
+        </div>
+        <div class="product-body">
+          <p class="product-brand">Ronson</p>
+          <p class="product-name">Navy Admiral Blue</p>
+          <p class="product-era">1955 · Deep Navy Enamel</p>
+          <div class="product-footer">
+            <span class="product-price">$340</span>
+            <button class="btn-add">+ Add</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6 ── images/product-verdant-triplex.png -->
+      <div class="product-card">
+        <div class="product-img-box">
+          <img src="images/product-verdant-triplex.png" alt="Imco Verdant Triplex 6700" loading="lazy" />
+        </div>
+        <div class="product-body">
+          <p class="product-brand">Imco</p>
+          <p class="product-name">Verdant Triplex 6700</p>
+          <p class="product-era">1962 · Brushed Chrome-Green</p>
+          <div class="product-footer">
+            <span class="product-price">$420</span>
+            <button class="btn-add">+ Add</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     ABOUT
+     Image file ➜  images/about-lighter.png
+     PNG transparent, 600×900 px
+     ══════════════════════════════════════════════ -->
+<section id="about" class="about-section">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-visual">
+        <div class="about-frame">
+          <img src="images/about-lighter.png" alt="Collectible lighter close-up" loading="lazy" />
+        </div>
+        <div class="about-accent">
+          <div class="about-accent-num">1942</div>
+          <div class="about-accent-text">Year of first collectible</div>
+        </div>
+      </div>
+      <div>
+        <p class="section-eyebrow">Our Story</p>
+        <div class="gold-line"></div>
+        <h2 class="section-title">By brand, era,<br />and material</h2>
+        <p class="section-desc" style="margin-bottom:36px;">Ignite &amp; Embers was founded by collectors who believe a lighter is not just a tool — it is a chapter of history you carry in your pocket. Every piece we source is verified, documented, and loved.</p>
+        <div class="about-points">
+          <div class="about-point">
+            <div class="about-point-icon">&#9672;</div>
+            <div>
+              <div class="about-point-title">Expert Authentication</div>
+              <p class="about-point-desc">Every lighter passes a 14-point verification by our in-house horologists and metallurgists before listing.</p>
+            </div>
+          </div>
+          <div class="about-point">
+            <div class="about-point-icon">&#9678;</div>
+            <div>
+              <div class="about-point-title">Provenance Documentation</div>
+              <p class="about-point-desc">Full chain-of-custody records accompany each piece, along with era-specific material analysis.</p>
+            </div>
+          </div>
+          <div class="about-point">
+            <div class="about-point-icon">&#9671;</div>
+            <div>
+              <div class="about-point-title">Collector's Guarantee</div>
+              <p class="about-point-desc">30-day returns, lifetime authentication certificates, and white-glove delivery worldwide.</p>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:44px;">
+          <a href="#collection" class="btn-primary">Explore the Collection &#8594;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════
+     BEST SELLERS
+     Image files ➜  images/bs-*.png
+     PNG transparent, 400×400 px each
+     ══════════════════════════════════════════════ -->
+<section id="bestsellers">
+  <div class="container">
+    <div style="text-align:center; max-width:500px; margin:0 auto 56px;">
+      <p class="section-eyebrow">Best Sellers</p>
+      <h2 class="section-title">Most coveted<br />this season</h2>
+    </div>
+    <div class="bestsellers-grid">
+
+      <!-- 01 ── images/bs-gold-eagle.png -->
+      <div class="bs-card">
+        <div class="bs-img-box">
+          <img src="images/bs-gold-eagle.png" alt="Gold Eagle Engraved" loading="lazy" />
+        </div>
+        <p class="bs-num">01</p>
+        <p class="bs-name">Gold Eagle Engraved</p>
+        <p class="bs-price">$285</p>
+      </div>
+
+      <!-- 02 ── images/bs-palladium-crest.png -->
+      <div class="bs-card">
+        <div class="bs-img-box">
+          <img src="images/bs-palladium-crest.png" alt="Palladium Crest" loading="lazy" />
+        </div>
+        <p class="bs-num">02</p>
+        <p class="bs-name">Palladium Crest</p>
+        <p class="bs-price">$1,240</p>
+      </div>
+
+      <!-- 03 ── images/bs-crimson-blade.png -->
+      <div class="bs-card">
+        <div class="bs-img-box">
+          <img src="images/bs-crimson-blade.png" alt="Crimson Blade Jet" loading="lazy" />
+        </div>
+        <p class="bs-num">03</p>
+        <p class="bs-name">Crimson Blade Jet</p>
+        <p class="bs-price">$195</p>
+      </div>
+
+      <!-- 04 ── images/bs-rollagas-mahogany.png -->
+      <div class="bs-card">
+        <div class="bs-img-box">
+          <img src="images/bs-rollagas-mahogany.png" alt="Rollagas Mahogany" loading="lazy" />
+        </div>
+        <p class="bs-num">04</p>
+        <p class="bs-name">Rollagas Mahogany</p>
+        <p class="bs-price">$680</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- WHY CHOOSE US — no product images needed -->
+<section class="why-section">
+  <div class="container">
+    <div style="text-align:center; max-width:500px; margin:0 auto 16px;">
+      <p class="section-eyebrow">Why Choose Us</p>
+      <h2 class="section-title">The standard for<br />fine collecting</h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="why-icon">&#9672;</div>
+        <h3 class="why-title">Authenticated Every Time</h3>
+        <p class="why-desc">No piece enters our catalogue without a written authentication report by former Sotheby's specialists and independent metallurgists.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">&#9678;</div>
+        <h3 class="why-title">Global White-Glove Shipping</h3>
+        <p class="why-desc">Custom foam-lined mahogany boxes, fully insured transit, climate-controlled freight for pieces above $500. Tracked door to door.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">&#9671;</div>
+        <h3 class="why-title">Lifetime Certificate</h3>
+        <p class="why-desc">Every lighter ships with an embossed provenance certificate, era research notes, and a unique ID registered in our permanent ledger.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- CUSTOMER REVIEWS — no product images needed -->
+<section id="reviews">
+  <div class="container">
+    <div style="text-align:center; max-width:480px; margin:0 auto 56px;">
+      <p class="section-eyebrow">Customer Reviews</p>
+      <h2 class="section-title">Trusted by collectors<br />worldwide</h2>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="review-stars"><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span></div>
+        <p class="review-text">"The 1968 Zippo arrived in a hand-stitched box with a certificate that read like a museum label. I've never felt so confident about a purchase."</p>
+        <div class="review-author">
+          <div class="review-avatar">MR</div>
+          <div><div class="review-name">Marcus R.</div><div class="review-loc">Berlin, Germany</div></div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars"><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span></div>
+        <p class="review-text">"Palladium Crest from Dupont — a piece I'd been hunting fifteen years. E&amp;E had it, authenticated it, and had it on my desk in Tokyo in four days."</p>
+        <div class="review-author">
+          <div class="review-avatar">AK</div>
+          <div><div class="review-name">Aiko K.</div><div class="review-loc">Tokyo, Japan</div></div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="review-stars"><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span><span class="star">&#9733;</span></div>
+        <p class="review-text">"The level of documentation rivals what I see at Christie's. These are serious collectors serving serious collectors. My whole collection is from them now."</p>
+        <div class="review-author">
+          <div class="review-avatar">SL</div>
+          <div><div class="review-name">Simon L.</div><div class="review-loc">London, UK</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- NEWSLETTER -->
+<div class="newsletter-section" id="newsletter">
+  <div class="newsletter-inner">
+    <p class="section-eyebrow" style="text-align:center;">Newsletter</p>
+    <h2 class="section-title" style="text-align:center;">First access,<br />always.</h2>
+    <p style="font-size:14px; color:rgba(242,237,228,.48); text-align:center; margin-top:10px;">Rare acquisitions, authentication notes, and collector essays — once a month.</p>
+    <form class="newsletter-form" onsubmit="return false;">
+      <input type="email" class="newsletter-input" placeholder="Your email address" />
+      <button type="submit" class="newsletter-btn" id="subBtn">Subscribe</button>
+    </form>
+  </div>
+</div>
+
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand-name">Ignite &amp; Embers</div>
+      <p class="footer-brand-desc">We source the world's most precise, beautiful, and collectible lighters. A piece that reflects your character.</p>
+    </div>
+    <div>
+      <p class="footer-col-title">Collections</p>
+      <ul class="footer-links">
+        <li><a href="#">Zippo Heritage</a></li>
+        <li><a href="#">S.T. Dupont</a></li>
+        <li><a href="#">Dunhill Archive</a></li>
+        <li><a href="#">Military Era</a></li>
+        <li><a href="#">Art Nouveau</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-col-title">Company</p>
+      <ul class="footer-links">
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Science</a></li>
+        <li><a href="#">Aesthetics</a></li>
+        <li><a href="#">Authentication</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="footer-col-title">Follow</p>
+      <ul class="footer-links">
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Twitter / X</a></li>
+        <li><a href="#">LinkedIn</a></li>
+        <li><a href="#">Newsletter</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">&#169; 2026 Ignite &amp; Embers. All rights reserved.</p>
+    <div class="footer-legal">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+      <a href="#">Shipping Policy</a>
+    </div>
+  </div>
+</footer>
+
+
+<script>
+  function openMenu()  { document.getElementById('mobileMenu').classList.add('open');    document.body.style.overflow = 'hidden'; }
+  function closeMenu() { document.getElementById('mobileMenu').classList.remove('open'); document.body.style.overflow = ''; }
+
+  // Scroll-reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll(
+    '.product-card, .bs-card, .why-card, .review-card, .about-point'
+  ).forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(22px)';
+    el.style.transition = 'opacity 0.55s ease, transform 0.55s ease';
+    observer.observe(el);
+  });
+
+  // Newsletter confirm
+  document.getElementById('subBtn').addEventListener('click', function () {
+    const inp = document.querySelector('.newsletter-input');
+    if (inp.value.includes('@')) {
+      this.textContent = 'Subscribed \u2713';
+      this.style.background = '#2a5a38';
+      inp.value = '';
+      setTimeout(() => { this.textContent = 'Subscribe'; this.style.background = ''; }, 3000);
+    }
+  });
+</script>
+
+</body>
+</html>
