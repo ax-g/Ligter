@@ -227,12 +227,6 @@
       cursor:not-allowed!important;opacity:.85;
       font-size:11px!important;letter-spacing:.08em!important;
     }
-    .video-progress{
-      position:absolute;bottom:0;left:0;
-      height:2px;width:0%;
-      background:linear-gradient(90deg,#c8a96e,#f0d090);
-      z-index:3;pointer-events:none;
-    }
   </style>
 </head>
 <body>
@@ -323,31 +317,21 @@
     </div>
     <div class="products-grid">
 
-      <!-- ══ GOLD EAGLE — scroll-scrubbed video card ══ -->
+      <!-- ══ GOLD EAGLE — autoplay video card ══ -->
       <div class="product-card" id="videoCard">
         <div class="product-img-box video-card-box">
           <span class="product-badge coming-soon-badge">Coming Soon</span>
-
-          <!--
-            FILE: videos/video1.webm
-            Place your .webm file at:  videos/video1.webm
-            The video is paused by JS and its currentTime is driven by scroll.
-            Scrolling DOWN  → plays forward  at scroll speed
-            Scrolling UP    → plays in reverse at scroll speed
-          -->
+          <!-- FILE: videos/video1.webm — plays fully when card enters view, loops -->
           <video
             id="scrollVideo"
             src="videos/video1.webm"
             muted
             playsinline
+            loop
             preload="auto"
             class="scroll-video"
           ></video>
-
-          <!-- subtle vignette overlay -->
           <div class="video-vignette"></div>
-          <!-- gold progress bar shows how far through the video we are -->
-          <div class="video-progress" id="videoProgress"></div>
         </div>
         <div class="product-body">
           <p class="product-brand">Zippo USA</p>
@@ -503,94 +487,23 @@
   /* ── newsletter ── */
   document.getElementById('subBtn').addEventListener('click',function(){const i=document.querySelector('.newsletter-input');if(i.value.includes('@')){this.textContent='Subscribed ✓';this.style.background='#2a5a38';i.value='';setTimeout(()=>{this.textContent='Subscribe';this.style.background=''},3000)}});
 
-  /* ══════════════════════════════════════════════════════════
-     SCROLL-SCRUBBED VIDEO ENGINE  v2
-     ────────────────────────────────────────────────────────
-     The video plays its FULL duration while the card is
-     visible in the viewport.
-
-     • When the card enters the viewport: video starts from
-       the current scroll position within the card's visible
-       range and plays forward.
-     • Scroll DOWN  → forward  (proportional to speed)
-     • Scroll UP    → reverse  (proportional to speed)
-     • Fast scroll  → fast playback
-     • Slow scroll  → slow playback
-     • Card fully scrolled past → video frozen at end
-     • Card not yet reached     → video frozen at start
-
-     The card's scroll range is mapped to [0 … duration]:
-       card enters bottom of viewport  → time = 0
-       card exits top of viewport      → time = duration
-  ══════════════════════════════════════════════════════════ */
+  /* ── VIDEO: play fully when card is visible, pause when not ── */
   (function(){
     const video = document.getElementById('scrollVideo');
-    const bar   = document.getElementById('videoProgress');
-    const card  = document.getElementById('videoCard');
-    if (!video || !card) return;
+    if (!video) return;
 
-    /* ── Config ── */
-    const LERP       = 0.18;   /* smoothing 0–1 (higher = snappier) */
-    const MIN_DELTA  = 0.0005; /* stop lerp when this close          */
+    const observer = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting) {
+          video.currentTime = 0; /* always restart from beginning */
+          video.play();
+        } else {
+          video.pause();
+        }
+      });
+    }, { threshold: 0.25 }); /* start playing when 25% of card is visible */
 
-    let duration  = 0;
-    let target    = 0;   /* desired currentTime                       */
-    let current   = 0;   /* smoothed currentTime                      */
-    let rafId     = null;
-    let running   = false;
-
-    /* Wait for video metadata */
-    function tryInit(){
-      duration = video.duration;
-      if (!duration || !isFinite(duration)) return;
-      video.pause();
-      video.currentTime = 0;
-      window.addEventListener('scroll', onScroll, {passive:true});
-      onScroll(); /* seed on load */
-    }
-    video.addEventListener('loadedmetadata', tryInit);
-    if (video.readyState >= 1) tryInit();
-
-    /* ── Map scroll position → video time ──
-       We use the card's bounding rect relative to the
-       viewport so the full video maps to the window of
-       scroll where the card travels through the viewport. */
-    function calcTarget(){
-      const rect   = card.getBoundingClientRect();
-      const vh     = window.innerHeight;
-
-      /* progress = 0 when card bottom just enters viewport (scrolling down)
-                  = 1 when card top just exits viewport    (scrolling up)  */
-      const total  = vh + rect.height;           /* total travel distance */
-      const gone   = vh - rect.top;              /* how much has passed   */
-      const pct    = Math.min(Math.max(gone / total, 0), 1);
-      return pct * duration;
-    }
-
-    function onScroll(){
-      if (!duration) return;
-      target = calcTarget();
-      if (!running){ running = true; rafId = requestAnimationFrame(tick); }
-    }
-
-    function tick(){
-      const diff = target - current;
-      if (Math.abs(diff) < MIN_DELTA){
-        current = target;
-        commit(current);
-        running = false; rafId = null;
-        return;
-      }
-      current += diff * LERP;
-      commit(current);
-      rafId = requestAnimationFrame(tick);
-    }
-
-    function commit(t){
-      const clamped = Math.min(Math.max(t, 0), duration);
-      video.currentTime = clamped;
-      if (bar) bar.style.width = ((clamped / duration) * 100).toFixed(2) + '%';
-    }
+    observer.observe(document.getElementById('videoCard'));
   })();
 </script>
 </body>
