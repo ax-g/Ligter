@@ -321,13 +321,14 @@
       <div class="product-card" id="videoCard">
         <div class="product-img-box video-card-box">
           <span class="product-badge coming-soon-badge">Coming Soon</span>
-          <!-- FILE: videos/video1.webm — plays fully when card enters view, loops -->
+          <!-- FILE: videos/video1.mp4 — plays fully when card enters view, loops -->
           <video
             id="scrollVideo"
-            src="videos/video1.webm"
+            src="videos/video1.mp4"
             muted
             playsinline
             loop
+            autoplay
             preload="auto"
             class="scroll-video"
           ></video>
@@ -495,15 +496,24 @@
     const observer = new IntersectionObserver(function(entries){
       entries.forEach(function(entry){
         if (entry.isIntersecting) {
-          video.currentTime = 0; /* always restart from beginning */
-          video.play();
+          video.currentTime = 0;
+          video.play().catch(function(){});
         } else {
           video.pause();
         }
       });
-    }, { threshold: 0.25 }); /* start playing when 25% of card is visible */
+    }, { threshold: 0.1 });
 
     observer.observe(document.getElementById('videoCard'));
+
+    /* Fallback: if already in view on page load, play immediately */
+    window.addEventListener('load', function(){
+      var rect = document.getElementById('videoCard').getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        video.currentTime = 0;
+        video.play().catch(function(){});
+      }
+    });
   })();
 </script>
 </body>
